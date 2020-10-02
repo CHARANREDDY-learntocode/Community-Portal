@@ -1,0 +1,56 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="bg-light container">
+        <img class="img mx-auto account-img d-flex rounded-circle py-1 mt-2" src="/media/{{user.image}}">
+<div class="container-fluid">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="from-group">
+            <div class="d-flex mx-auto border-bottom mb-4">
+                <legend class="text-light bg-info mb-0 mr-1"><h1 class="ml-5"><small>Hello</small> {{user.user.first_name}}!</h1></legend>
+                <a href='{% url "password_change" %}' class="btn btn-warning ">Change Password</a></button>
+            </div>
+            {{ user_form|crispy }}
+            {{ profile_form|crispy }}
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>
+{% endblock content %}
+{% block extra_css %}
+<style type="text/css">
+img{
+    width: 200px;
+    height: 200px;
+}
+table{
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+td{
+    border:1px solid white;
+    margin-left: 5px;
+}
+td p{
+    margin-left: 3px;
+    margin-right: 3px;
+}
+#profile{
+    background-color: white;
+}
+#profile a{
+    color: black;
+}
+a:hover{
+    text-decoration: none;
+}
+</style>
+{% endblock extra_css %}
+{% block extra_js %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#hint_id_username').text("info: Username can't be changed")
+    })
+</script>
+{% endblock extra_js %}

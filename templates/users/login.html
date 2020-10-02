@@ -1,0 +1,44 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class='content-section container' style='max-width: 400px' >
+    {% if form.errors %}
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>No!</strong> That's not the right Username or Password
+        </div>
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Login</legend>
+            {{ form|crispy }}
+        </fieldset>
+        <div class='form-group'>
+            <button class='btn btn-info' type='submit'>Login</button>
+        </div>
+        <a  href='{% url "password_reset" %}'><b>Forgot Password?</b></a>
+        <div class="text-mute" style='margin-top:15px;'>
+            Don't have an Account?
+            <a class="text-info" href="{% url 'register' %}" ><b>Register Here</b></a>
+        </div>
+</div>
+{% block extra_css %}
+<style type="text/css">
+#login{
+    background-color: white;
+}
+#login a{
+    color: black;
+}
+</style>
+{% endblock extra_css %}
+{% block extra_js %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.alert:last').hide()
+    })
+</script>
+{% endblock extra_js %}
+{% endblock %}

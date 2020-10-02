@@ -1,0 +1,74 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+<div class="container mt-2">
+    <legend class='text-success border-bottom mb-4'><b>Your blogs ({{page_obj.paginator.count}})</b></legend>
+</div>
+{% if posts.count == 0 %}
+<h4 class="container text-secondary">You don't have any posts.<a href="{% url 'post-create' %}" class="btn btn-info">Create One</a></h4>
+{% else %}
+    {% for post in posts %}
+    <div class="container">
+        <div class='card mb-2'>
+            <div class="card-header">
+            <div class=" d-flex">
+                 <a href="{% url 'user-posts' post.author.username %}">
+                    <div class=" d-flex">
+                        <img src='/media/{{post.author.profile.image}}' width=25px height=25px class="rounded-circle">
+                        <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p>
+                     </div>
+                </a>
+                {% if post.author == request.user %}
+                    <a href="{% url 'post-update' post.id %}" class="btn btn-info ml-auto">Edit</a>
+                    <a href="{% url 'post-delete' post.id %}" class="btn btn-danger ml-2">Delete</a>
+                    </div>
+                {% else %}
+                    </div>
+                {% endif %}
+                <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+            </div>
+            <div class='card-body text-primary' style="margin-bottom: 1em;">
+                <h5 style='color: black;'>{{ post.content|safe }}</h5>
+            </div>
+            <div class="card-footer">
+                    <h3 id='like{{ post.id  }}Number' class="text-info">{{  post.likes.count  }} Likes</h3>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+        {% if is_paginated %}
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-outline-info mb-4">First</a>
+                <a href="?page={{page_obj.previous_page_number}}" class="btn btn-outline-info mb-4">Previous</a>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <a href="?page={{ num }}" class="btn btn-info mb-4">{{ num }}</a>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}" class="btn btn-outline-info mb-4">{{num}}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <a href="?page={{page_obj.next_page_number}}" class="btn btn-outline-info mb-4">Next</a>
+                <a href="?page={{page_obj.paginator.num_pages }}" class="btn btn-outline-info mb-4">Last</a>
+            {% endif %}
+        {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+{% endblock content %}
+{% block extra_css %}
+<style type="text/css">
+.btn:active,.btn:visited{
+    border: 0px;
+}
+#myBlogs{
+    background-color: white;
+}
+#myBlogs a{
+    color: black;
+}
+a:hover{
+text-decoration: none;
+}
+</style>
+{% endblock extra_css %}

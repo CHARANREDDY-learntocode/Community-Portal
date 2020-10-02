@@ -1,0 +1,112 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+<div class="container mt-2">
+    <legend class='text-success border-bottom mb-4'><b>Posts by {{ view.kwargs.username }} ({{page_obj.paginator.count}})</b></legend>
+</div>
+{% if posts.count == 0 %}
+<h4 class="container text-secondary">This user don't have any posts.</h4>
+{% else %}
+<div class="container">
+    {% for post in posts %}
+    {% if request.user.is_authenticated %}
+        {% if post.author != request.user %}
+            {% if post in request.user.likes.all %}
+                <div class='card mb-2'>
+                    <div class="card-header">
+                        <a href="{% url 'user-posts' post.author.username %}">
+                            <div class=" d-flex">
+                                <img src='/media/{{post.author.profile.image}}' width=25px height=25px class="rounded-circle">
+                                <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p>
+                            </div>
+                        </a>
+                        <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+                    </div>
+                    <div class='card-body text-primary' style="margin-bottom: 1em;">
+                        <h5 style='color: black;'>{{ post.content|safe }}</h5>
+                    </div>
+                    <form method="POST" action="{% url 'blog-liked' %}">
+                        {% csrf_token %}
+                        <div class="card-footer d-flex">
+                            <input type='text' hidden name="from_article" value="{{ view.kwargs.username }}">
+                            <button  id='like{{post.id}}' type="submit" name="post_id" value="{{post.id}}" class='btn  text-primary'><i class="fa fa-thumbs-up" style="font-size: 25px;"></i></button>
+                            <h3 id='like{{ post.id  }}Number'  class="text-info">{{  post.likes.count  }} Likes</h3>
+                        </div>
+                    </form>
+            {% else %}
+                <div class='card mb-2'>
+                    <div class="card-header">
+                        <a href="{% url 'user-posts' post.author.username %}">
+                            <div class=" d-flex">
+                                <img src='/media/{{post.author.profile.image}}' width=25px  height=25px class="rounded-circle">
+                                <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p>
+                            </div>
+                        </a>
+                        <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+                    </div>
+                    <div class='card-body text-primary' style="margin-bottom: 1em;">
+                        <h5 style='color: black;'>{{ post.content|safe }}</h5>
+                    </div>
+                    <form method="POST" action="{% url 'blog-liked' %}">
+                        {% csrf_token %}
+                        <div class="card-footer d-flex">
+                            <input type='text' hidden name="from_article" value="{{ view.kwargs.username }}">
+                            <button id='like{{post.id}}' type="submit" name='post_id' value="{{post.id}}" class='btn  text-primary ml-2'><i class="fa fa-thumbs-o-up" style="font-size: 25px;"></i></button>
+                            <h3 id='like{{ post.id  }}Number' class="text-info">{{  post.likes.count  }} Likes</h3>
+                        </div>
+                    </form>
+            {% endif %}
+        {% else %}
+            <div class='card mb-2'>
+                <div class="card-header">
+                    <a href="{% url 'user-posts' post.author.username %}">
+                        <div class=" d-flex">
+                            <img src='/media/{{post.author.profile.image}}' width=25px height=25px class="rounded-circle">
+                            <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+                </div>
+                <div class='card-body text-primary' style="margin-bottom: 1em;">
+                    <h5 style='color: black;'>{{ post.content|safe }}</h5>
+                </div>
+                <div class="card-footer">
+                    <h3 id='like{{ post.id  }}Number' class="text-info">{{  post.likes.count  }} Likes</h3>
+                </div>
+        {% endif %}
+    {% else %}
+        <div class='card mb-2'>
+            <div class="card-header">
+                <div class=" d-flex">
+                     <a href="{% url 'user-posts' post.author.username %}"><img src='/media/{{post.author.profile.image}}' width=25px height=25px class="rounded-circle">
+                    <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p></a>
+                </div>
+                <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+            </div>
+            <div class='card-body text-primary' style="margin-bottom: 1em;">
+                <h5 style='color: black;'>{{ post.content|safe }}</h5>
+            </div>
+            <div class="card-footer">
+                <h3 id='like{{ post.id  }}Number' class="text-info">{{  post.likes.count  }} Likes</h3>
+            </div>
+    {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock content %}
+{% block extra_css %}
+<style type="text/css">
+.btn:active,.btn:visited{
+    border: 0px;
+}
+#myBlogs{
+    background-color: white;
+}
+#myBlogs a{
+    color: black;
+}
+a:hover{
+text-decoration: none;
+}
+</style>
+{% endblock extra_css %}

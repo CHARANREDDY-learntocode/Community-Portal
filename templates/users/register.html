@@ -1,0 +1,37 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class='content-section container' style='max-width: 400px;'>
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Register Now</legend>
+            {{ form|crispy }}
+        </fieldset>
+        <div class='form-group'>
+            <button class='btn btn-info' type='submit'>Register</button>
+        </div>
+        <div class='border-top pt-3'>
+            <h4 class='text-muted'>
+                Already Have An Account? <a class='ml-2' href='{% url "login" %}'><b>Login</b></a>
+            </h4>
+        </div>
+</div>
+{% endblock content %}
+{% block extra_css %}
+<style type="text/css">
+#register{
+    background-color: white;
+}
+#register a{
+    color: black;
+}
+</style>
+{% endblock extra_css %}
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function(){
+    $('strong').css({'color': '#e84346'});
+});
+</script>
+{% endblock extra_js %}

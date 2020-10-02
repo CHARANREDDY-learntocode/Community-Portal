@@ -1,0 +1,38 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <legend class="border-bottom mb-4 text-primary">Create Post</legend>
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+        {% if form.errors %}
+          <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Error!</strong> The fields should not be empty.
+          </div>
+        {% endif %}
+        {{ form.media }}
+        {{ form| crispy}}
+        </fieldset>
+        <button class="btn btn-primary" type="submit">Create Blog</button>
+    </form>
+</div>
+{% endblock content %}
+{% block extra_css %}
+<style type="text/css">
+#newPost{
+    background-color: white;
+}
+#newPost a{
+    color: black;
+}
+</style>
+{% endblock extra_css %}
+{% block extra_js %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#div_id_author').hide();
+    });
+</script>
+{% endblock extra_js %}

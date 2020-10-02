@@ -1,0 +1,128 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+<div class="container mt-2">
+    <h1 class='text-success border-bottom mb-4'><b>Explore Posts</b></h1>
+</div>
+<div class="container">
+{% for post in posts %}
+    {% if request.user.is_authenticated %}
+        {% if post.author != request.user %}
+            {% if post in request.user.likes.all %}
+                <div class='card mb-2'>
+                    <div class="card-header">
+                        <a href="{% url 'user-posts' post.author.username %}">
+                            <div class="d-flex">
+                                <img src='/media/{{post.author.profile.image}}' width=25px height=25px class="rounded-circle">
+                                <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p>
+                            </div>
+                        </a>
+                        <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+                    </div>
+                    <div class='card-body text-primary' style="margin-bottom: 1em;">
+                        <h5 style='color: black;'>{{ post.content|safe }}</h5>
+                    </div>
+                    <form method="POST" action="{% url 'blog-liked' %}">
+                        {% csrf_token %}
+                        <div class="card-footer d-flex">
+                            <button  id='like{{post.id}}' type="submit" name="post_id" value="{{post.id}}" class='btn  text-primary'><i class="fa fa-thumbs-up" style="font-size: 25px;"></i></button>
+                            <h3 id='like{{ post.id  }}Number'  class="text-info">{{  post.likes.count  }} Likes</h3>
+                        </div>
+                    </form>
+            {% else %}
+                <div class='card mb-2'>
+                    <div class="card-header">
+                        <a href="{% url 'user-posts' post.author.username %}">
+                            <div class=" d-flex">
+                                <img src='/media/{{post.author.profile.image}}' width=25px height=25px class="rounded-circle">
+                                <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p>
+                            </div>
+                        </a>
+                        <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+                    </div>
+                    <div class='card-body text-primary' style="margin-bottom: 1em;">
+                        <h5 style='color: black;'>{{ post.content|safe }}</h5>
+                    </div>
+                    <form method="POST" action="{% url 'blog-liked' %}">
+                        {% csrf_token %}
+                        <div class="card-footer d-flex">
+                            <button id='like{{post.id}}' type="submit" name='post_id' value="{{post.id}}" class='btn  text-primary'><i class="fa fa-thumbs-o-up" style="font-size: 25px;"></i></button>
+                            <h3 id='like{{ post.id  }}Number' class="text-info">{{  post.likes.count  }} Likes</h3>
+                        </div>
+                    </form>
+            {% endif %}
+        {% else %}
+            <div class='card mb-2'>
+                <div class="card-header">
+                    <a href="{% url 'user-posts' post.author.username %}">
+                        <div class=" d-flex">
+                            <img src='/media/{{post.author.profile.image}}' width=25px height=25px class="rounded-circle">
+                            <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+                </div>
+                <div class='card-body text-primary' style="margin-bottom: 1em;">
+                    <h5 style='color: black;'>{{ post.content|safe }}</h5>
+                </div>
+                <div class="card-footer">
+                    <h3 id='like{{ post.id  }}Number' class="text-info">{{  post.likes.count  }} Likes</h3>
+                </div>
+        {% endif %}
+    {% else %}
+        <div class='card mb-2'>
+            <div class="card-header">
+                <a href="{% url 'user-posts' post.author.username %}">
+                <div class=" d-flex">
+                     <img src='/media/{{post.author.profile.image}}' width=25px height=25px class="rounded-circle">
+                    <p class='text-success ml-2'>Posted by {{post.author}} on {{ post.date_posted }}</p>
+                </div>
+                </a>
+                <a href="{% url 'post-detail' post.id %}"><h3 class='text-primary'><b>{{ post.title }}</b></h3></a>
+            </div>
+            <div class='card-body text-primary' style="margin-bottom: 1em;">
+                <h5 style='color: black;'>{{ post.content|safe }}</h5>
+            </div>
+            <div class="card-footer">
+                <h3 id='like{{ post.id  }}Number' class="text-info">{{  post.likes.count  }} Likes</h3>
+            </div>
+    {% endif %}
+</div>
+{% endfor %}
+<div class="d-flex justify-content-center align-items-center">
+    {% if is_paginated %}
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-outline-info mb-4">First</a>
+            <a href="?page={{page_obj.previous_page_number}}" class="btn btn-outline-info mb-4">Previous</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+                <a href="?page={{ num }}" class="btn btn-info mb-4">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}" class="btn btn-outline-info mb-4">{{num}}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a href="?page={{page_obj.next_page_number}}" class="btn btn-outline-info mb-4">Next</a>
+            <a href="?page={{page_obj.paginator.num_pages }}" class="btn btn-outline-info mb-4">Last</a>
+        {% endif %}
+    {% endif %}
+</div>
+</div>
+
+{% endblock content %}
+{% block extra_css %}
+<style type="text/css">
+.btn:active,.btn:visited{
+    border: 0px;
+}
+#homePage{
+    background-color: white;
+}
+#homePage a{
+    color: black;
+}
+a:hover{
+text-decoration: none;
+}
+</style>
+{% endblock extra_css %}

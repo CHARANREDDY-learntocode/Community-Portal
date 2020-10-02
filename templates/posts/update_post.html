@@ -1,0 +1,23 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <legend class="border-bottom mb-4 text-primary">Edit Post</legend>
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+        {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Error!</strong> The fields should not be empty.
+            </div>
+        {% endif %}
+        {{ form.media }}
+        {{ form| crispy}}
+        </fieldset>
+        <button class="btn btn-warning" type="submit">Update Blog</button>
+    </form>
+</div>
+{% endblock content %}
+
+
